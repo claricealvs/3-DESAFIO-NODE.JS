@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import connect from '../../database/connection';
 import { Reserve } from '../../database/entities/Reserve';
 
-export class ReserveServices {
+export class ReserveService {
   private reserveRepository!: Repository<Reserve>;
 
   constructor() {
