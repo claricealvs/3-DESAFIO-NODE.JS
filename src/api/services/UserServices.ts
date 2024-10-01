@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import connect from '../../database/connection';
 import { User } from '../../database/entities/User';
 
-export class UserServices {
+export class UserService {
   private userRepository!: Repository<User>;
 
   constructor() {
