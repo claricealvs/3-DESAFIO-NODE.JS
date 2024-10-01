@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import connect from '../../database/connection';
 import { Acessory } from '../../database/entities/Acessory';
 
-export class AcessoryServices {
+export class AcessoryService {
   private acessoryRepository!: Repository<Acessory>;
 
   constructor() {
