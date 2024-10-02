@@ -15,6 +15,20 @@ export class CarService {
     this.carRepository = connection.getRepository(Car);
   }
 
+  async getAllCars() {
+    try {
+      return await this.carRepository.find({
+        relations: ['acessories'],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error retrieving sessions: ${error.message}`);
+      } else {
+        throw new Error(`Unknown error retrieving sessions`);
+      }
+    }
+  }
+
   async createCar(
     model: string,
     color: string,
