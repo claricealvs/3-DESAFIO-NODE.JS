@@ -22,9 +22,25 @@ export class CarService {
       });
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(`Error retrieving sessions: ${error.message}`);
+        throw new Error(`Error retrieving car: ${error.message}`);
       } else {
-        throw new Error(`Unknown error retrieving sessions`);
+        throw new Error(`Unknown error retrieving car`);
+      }
+    }
+  }
+
+  async getCarById(id: number): Promise<Car | null> {
+    try {
+      const car = await this.carRepository.findOne({
+        where: { id },
+        relations: ['acessories'],
+      });
+      return car ? car : null;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error retrieving car with ID ${id}: ${error.message}`);
+      } else {
+        throw new Error('Unknown error retrieving car');
       }
     }
   }
