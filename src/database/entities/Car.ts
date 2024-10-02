@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Acessory } from './Acessory';
+import { AcessoryEnum } from '../../database/enums/AcessoryEnum';
 import { Reserve } from './Reserve';
 
 @Entity('cars')
@@ -22,8 +22,8 @@ export class Car {
   @Column()
   numberOfPassengers!: number;
 
-  @OneToMany(() => Acessory, (acessory) => acessory.car)
-  acessories!: Acessory[];
+  @Column('simple-array')
+  acessories!: AcessoryEnum[];
 
   @OneToMany(() => Reserve, (reserve) => reserve.car)
   reserves!: Reserve[];
