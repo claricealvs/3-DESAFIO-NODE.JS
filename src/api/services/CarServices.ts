@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import connect from '../../database/connection';
 import { Car } from '../../database/entities/Car';
-import { Acessory } from '../../database/entities/Acessory';
+import { AcessoryEnum } from '../../database/enums/AcessoryEnum';
 
 export class CarService {
   private carRepository!: Repository<Car>;
@@ -17,9 +17,7 @@ export class CarService {
 
   async getAllCars() {
     try {
-      return await this.carRepository.find({
-        relations: ['acessories'],
-      });
+      return await this.carRepository.find();
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error retrieving car: ${error.message}`);
@@ -33,7 +31,6 @@ export class CarService {
     try {
       const car = await this.carRepository.findOne({
         where: { id },
-        relations: ['acessories'],
       });
       return car ? car : null;
     } catch (error) {
@@ -50,7 +47,7 @@ export class CarService {
     color: string,
     year: number,
     valuePerDay: number,
-    acessories: Acessory[],
+    acessories: AcessoryEnum[],
     numberOfPassengers: number,
   ): Promise<Car> {
     const newCar = this.carRepository.create({
@@ -66,5 +63,54 @@ export class CarService {
     await this.carRepository.save(newCar);
 
     return newCar;
+  }
+
+  async updateCar(
+    id: number,
+    model: string,
+    color: string,
+    year: number,
+    valuePerDay: number,
+    acessories: AcessoryEnum[],
+    numberOfPassengers: number,
+  ) {
+    const existingCar = await this.carRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingCar) {
+      throw new Error('The inserted car does not exist.');
+    }
+
+    if ([model, color].every((value) => typeof value !== 'string')) {
+      throw new Error('Incompatible data value.');
+    }
+
+    if (
+      [id, year, valuePerDay, numberOfPassengers].every(
+        (value) => typeof value !== 'number',
+      )
+    ) {
+      throw new Error('Incompatible data value.');
+    }
+
+    await this.carRepository.update(id, {
+      model,
+      color,
+      year,
+      valuePerDay,
+      acessories,
+      numberOfPassengers,
+    });
+
+    const updatedCar = await this.carRepository.findOne({
+      where: { id },
+    });
+
+    if (!updatedCar) {
+      throw new Error('Error when searching for updated car.');
+    }
+
+    return updatedCar;
   }
 }
