@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { CarService } from '../services/CarServices';
+import { AcessoryEnum } from '../../database/enums/AcessoryEnum';
 
 export class CarController {
   private carService = new CarService();
@@ -16,10 +17,7 @@ export class CarController {
             color: car.color,
             year: car.year,
             valuePerDay: car.valuePerDay,
-            acessories: car.acessories.map((acessory) => ({
-              id: acessory.id,
-              name: acessory.name,
-            })),
+            acessories: car.acessories,
             numberOfPassengers: car.numberOfPassengers,
           },
         ],
@@ -63,10 +61,7 @@ export class CarController {
         color: car.color,
         year: car.year,
         valuePerDay: car.valuePerDay,
-        acessories: car.acessories.map((acessory) => ({
-          id: acessory.id,
-          name: acessory.name,
-        })),
+        acessories: car.acessories,
         numberOfPassengers: car.numberOfPassengers,
       });
     } catch (error: unknown) {
@@ -91,12 +86,19 @@ export class CarController {
         numberOfPassengers,
       } = req.body;
 
+      const validAcessories = acessories.map((acessory: string) => {
+        if (!Object.values(AcessoryEnum).includes(acessory as AcessoryEnum)) {
+          throw new Error(`Invalid acessory: ${acessory}`);
+        }
+        return acessory as AcessoryEnum;
+      });
+
       const newCar = await this.carService.createCar(
         model,
         color,
         year,
         valuePerDay,
-        acessories,
+        validAcessories,
         numberOfPassengers,
       );
 
@@ -116,6 +118,64 @@ export class CarController {
         return res.status(400).json({ error: error.message });
       } else {
         return res.status(500).json({ error: 'Ocorreu um erro inesperado.' });
+      }
+    }
+  }
+
+  async updateCar(req: Request, res: Response) {
+    try {
+      const {
+        model,
+        color,
+        year,
+        valuePerDay,
+        acessories,
+        numberOfPassengers,
+      } = req.body;
+
+      const id = req.params.id;
+
+      const validAcessories = acessories.map((acessory: string) => {
+        if (!Object.values(AcessoryEnum).includes(acessory as AcessoryEnum)) {
+          throw new Error(`Invalid acessory: ${acessory}`);
+        }
+        return acessory as AcessoryEnum;
+      });
+
+      const updatedCar = await this.carService.updateCar(
+        parseInt(id, 10),
+        model,
+        color,
+        year,
+        valuePerDay,
+        validAcessories,
+        numberOfPassengers,
+      );
+
+      return res.status(201).json(updatedCar);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const code = (error as any).status || 400;
+
+        let statusMessage = '';
+
+        if (code == 400) {
+          statusMessage = 'Bad Request';
+        }
+
+        if (code == 404) {
+          statusMessage = 'Not Found';
+        }
+
+        return res.status(code).json({
+          code: code,
+          status: statusMessage,
+          message: error.message,
+        });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
       }
     }
   }
