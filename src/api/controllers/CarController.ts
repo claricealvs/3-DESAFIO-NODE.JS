@@ -43,6 +43,43 @@ export class CarController {
     }
   }
 
+  async getCarById(req: Request, res: Response): Promise<Response> {
+    const id = req.params.id;
+
+    try {
+      const car = await this.carService.getCarById(parseInt(id, 10));
+
+      if (!car) {
+        return res.status(404).json({
+          code: 404,
+          status: 'Not Found',
+          message: 'Car not found',
+        });
+      }
+
+      return res.status(200).json({
+        id: car.id,
+        model: car.model,
+        color: car.color,
+        year: car.year,
+        valuePerDay: car.valuePerDay,
+        acessories: car.acessories.map((acessory) => ({
+          id: acessory.id,
+          name: acessory.name,
+        })),
+        numberOfPassengers: car.numberOfPassengers,
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(500).json({ message: error.message });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
+      }
+    }
+  }
+
   async createCar(req: Request, res: Response) {
     try {
       const {
