@@ -3,13 +3,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connect from './database/connection';
 import carRoutes from './routes/carRoutes';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-app.use('/v1', carRoutes);
+app.use('/v1', carRoutes, userRoutes);
 app.use('/', (req, res) => res.send('API funcionando!'));
 
 async function startServer() {
