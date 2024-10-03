@@ -113,4 +113,16 @@ export class CarService {
 
     return updatedCar;
   }
+
+  async deleteCar(id: string): Promise<void> {
+    const existingCar = await this.carRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingCar) {
+      throw new Error('The inserted car does not exist.');
+    }
+
+    await this.carRepository.delete(id);
+  }
 }
