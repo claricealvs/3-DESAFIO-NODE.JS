@@ -115,9 +115,27 @@ export class CarController {
       return res.status(201).json(formattedCar);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
+        const code = (error as any).status || 400;
+
+        let statusMessage = '';
+
+        if (code == 400) {
+          statusMessage = 'Bad Request';
+        }
+
+        if (code == 404) {
+          statusMessage = 'Not Found';
+        }
+
+        return res.status(code).json({
+          code: code,
+          status: statusMessage,
+          message: error.message,
+        });
       } else {
-        return res.status(500).json({ error: 'Ocorreu um erro inesperado.' });
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
       }
     }
   }
