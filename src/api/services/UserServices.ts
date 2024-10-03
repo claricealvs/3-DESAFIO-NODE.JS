@@ -14,6 +14,18 @@ export class UserService {
     this.userRepository = connection.getRepository(User);
   }
 
+  async getAllUsers() {
+    try {
+      return await this.userRepository.find();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error retrieving user: ${error.message}`);
+      } else {
+        throw new Error(`Unknown error retrieving user`);
+      }
+    }
+  }
+
   async createUser(
     name: string,
     cpf: string,
