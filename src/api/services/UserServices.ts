@@ -91,4 +91,60 @@ export class UserService {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
+
+  async updateUser(
+    id: number,
+    name: string,
+    cpf: string,
+    birth: string,
+    cep: string,
+    email: string,
+    password: string,
+  ) {
+    const existingUser = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingUser) {
+      throw new Error('The inserted user does not exist.');
+    }
+    if (
+      ![name, cpf, cep, email, password].every(
+        (value) => typeof value === 'string',
+      )
+    ) {
+      throw new Error('Incompatible data value.');
+    }
+
+    const [day, month, year] = birth.split('/');
+    const formattedBirth = new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+    );
+
+    // Verificar se a data é válida
+    if (isNaN(formattedBirth.getTime())) {
+      throw new Error('Invalid birth date format');
+    }
+
+    await this.userRepository.update(id, {
+      name,
+      cpf,
+      birth,
+      cep,
+      email,
+      password,
+    });
+
+    const updatedUser = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!updatedUser) {
+      throw new Error('Error when searching for updated user.');
+    }
+
+    return updatedUser;
+  }
 }
