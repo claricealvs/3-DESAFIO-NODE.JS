@@ -26,6 +26,23 @@ export class UserService {
     }
   }
 
+  async getUserById(id: number): Promise<User | null> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id },
+      });
+      return user ? user : null;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Error retrieving user with ID ${id}: ${error.message}`,
+        );
+      } else {
+        throw new Error('Unknown error retrieving user');
+      }
+    }
+  }
+
   async createUser(
     name: string,
     cpf: string,
