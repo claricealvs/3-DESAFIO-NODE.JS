@@ -4,6 +4,42 @@ import { UserService } from '../services/UserServices';
 export class UserController {
   private userService = new UserService();
 
+  async getAllusers(req: Request, res: Response) {
+    try {
+      const users = await this.userService.getAllUsers();
+
+      const formattedUsers = users.map((user) => ({
+        user: [
+          {
+            id: user.id,
+            name: user.name,
+            cpf: user.cpf,
+            birth: user.birth,
+            cep: user.cep,
+            email: user.email,
+            password: user.password,
+          },
+        ],
+      }));
+
+      res.json(formattedUsers);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(400).json({
+          code: 400,
+          status: 'Bad Request',
+          message: error.message,
+        });
+      } else {
+        return res.status(500).json({
+          code: 500,
+          status: 'Internal Server Error',
+          message: 'An unexpected error has occurred.',
+        });
+      }
+    }
+  }
+
   async createUser(req: Request, res: Response) {
     try {
       const { name, cpf, birth, cep, email, password } = req.body;
