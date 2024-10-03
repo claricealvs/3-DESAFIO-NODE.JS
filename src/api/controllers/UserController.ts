@@ -40,6 +40,40 @@ export class UserController {
     }
   }
 
+  async getUserById(req: Request, res: Response): Promise<Response> {
+    const id = req.params.id;
+
+    try {
+      const user = await this.userService.getUserById(parseInt(id, 10));
+
+      if (!user) {
+        return res.status(404).json({
+          code: 404,
+          status: 'Not Found',
+          message: 'User not found',
+        });
+      }
+
+      return res.status(200).json({
+        id: user.id,
+        name: user.name,
+        cpf: user.cpf,
+        birth: user.birth,
+        cep: user.cep,
+        email: user.email,
+        password: user.password,
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(500).json({ message: error.message });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
+      }
+    }
+  }
+
   async createUser(req: Request, res: Response) {
     try {
       const { name, cpf, birth, cep, email, password } = req.body;
