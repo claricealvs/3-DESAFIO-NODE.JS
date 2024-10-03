@@ -174,6 +174,34 @@ export class CarService {
     return updatedCar;
   }
 
+  async updateCarAccessories(id: number, acessories: AcessoryEnum[]) {
+    const car = await this.carRepository.findOne({ where: { id } });
+
+    if (!car) {
+      throw new Error('Car not found.');
+    }
+
+    if (!acessories || acessories.length === 0) {
+      throw new Error('At least one accessory is required.');
+    }
+
+    const uniqueAcessories = new Set(acessories);
+    if (uniqueAcessories.size !== acessories.length) {
+      throw new Error('Duplicate accessories are not allowed.');
+    }
+
+    for (const acessory of acessories) {
+      if (!Object.values(AcessoryEnum).includes(acessory)) {
+        throw new Error(`Invalid accessory: ${acessory}`);
+      }
+    }
+
+    car.acessories = acessories;
+    await this.carRepository.save(car);
+
+    return car;
+  }
+
   async deleteCar(id: string): Promise<void> {
     const existingCar = await this.carRepository.findOne({
       where: { id },
