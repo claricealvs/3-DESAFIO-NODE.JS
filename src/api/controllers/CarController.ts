@@ -170,7 +170,17 @@ export class CarController {
         numberOfPassengers,
       );
 
-      return res.status(201).json(updatedCar);
+      const formattedCar = {
+        id: updatedCar.id,
+        model: updatedCar.model,
+        color: updatedCar.color,
+        year: updatedCar.year,
+        valuePerDay: updatedCar.valuePerDay,
+        acessories: updatedCar.acessories,
+        numberOfPassengers: updatedCar.numberOfPassengers,
+      };
+
+      return res.status(201).json(formattedCar);
     } catch (error: unknown) {
       if (error instanceof Error) {
         const code = (error as any).status || 400;
