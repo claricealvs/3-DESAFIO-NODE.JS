@@ -50,6 +50,48 @@ export class CarService {
     acessories: AcessoryEnum[],
     numberOfPassengers: number,
   ): Promise<Car> {
+    if (
+      !model ||
+      !color ||
+      !year ||
+      !valuePerDay ||
+      !acessories ||
+      !numberOfPassengers
+    ) {
+      throw new Error('All fields are required.');
+    }
+
+    if (![model, color].every((value) => typeof value === 'string')) {
+      throw new Error('Incompatible data value.');
+    }
+
+    if (
+      ![year, valuePerDay, numberOfPassengers].every(
+        (value) => typeof value === 'number',
+      )
+    ) {
+      throw new Error('Incompatible data value.');
+    }
+
+    if (year < 1950 || year > 2023) {
+      throw new Error('Year of manufacture must be between 1950 and 2023.');
+    }
+
+    if (!acessories || acessories.length === 0) {
+      throw new Error('At least one accessory is required.');
+    }
+
+    const uniqueAcessories = new Set(acessories);
+    if (uniqueAcessories.size !== acessories.length) {
+      throw new Error('Duplicate accessories are not allowed.');
+    }
+
+    for (const acessory of acessories) {
+      if (!Object.values(AcessoryEnum).includes(acessory)) {
+        throw new Error(`Invalid accessory: ${acessory}`);
+      }
+    }
+
     const newCar = this.carRepository.create({
       model,
       color,
@@ -59,7 +101,6 @@ export class CarService {
       numberOfPassengers,
     });
 
-    // Salvar no banco de dados
     await this.carRepository.save(newCar);
 
     return newCar;
