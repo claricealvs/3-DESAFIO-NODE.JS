@@ -51,12 +51,9 @@ export class CarService {
     numberOfPassengers: number,
   ): Promise<Car> {
     if (
-      !model ||
-      !color ||
-      !year ||
-      !valuePerDay ||
-      !acessories ||
-      !numberOfPassengers
+      ![model, color, year, valuePerDay, acessories, numberOfPassengers].every(
+        (value) => typeof value === null,
+      )
     ) {
       throw new Error('All fields are required.');
     }
