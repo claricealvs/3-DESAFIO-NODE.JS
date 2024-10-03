@@ -208,6 +208,42 @@ export class CarController {
     }
   }
 
+  async updateCarAccessories(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const { acessories } = req.body;
+
+    try {
+      const updatedCar = await this.carService.updateCarAccessories(
+        parseInt(id, 10),
+        acessories,
+      );
+
+      return res.status(200).json(updatedCar);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const code = (error as any).status || 400;
+
+        let statusMessage = '';
+
+        if (code == 400) {
+          statusMessage = 'Bad Request';
+        }
+
+        if (code == 404) {
+          statusMessage = 'Not Found';
+        }
+
+        return res.status(code).json({
+          code: code,
+          status: statusMessage,
+          message: error.message,
+        });
+      } else {
+        return res.status(500).json({ error: 'An unexpected error occurred.' });
+      }
+    }
+  }
+
   async deleteCar(req: Request, res: Response) {
     try {
       const id = req.params.id;
