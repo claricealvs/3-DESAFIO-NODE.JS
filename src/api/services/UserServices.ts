@@ -147,4 +147,16 @@ export class UserService {
 
     return updatedUser;
   }
+
+  async deleteUser(id: string): Promise<void> {
+    const existingUser = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingUser) {
+      throw new Error('The inserted user does not exist.');
+    }
+
+    await this.userRepository.delete(id);
+  }
 }
