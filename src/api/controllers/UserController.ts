@@ -214,4 +214,38 @@ export class UserController {
       }
     }
   }
+
+  async deleteUser(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+
+      await this.userService.deleteUser(id);
+
+      return res.status(204).json();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const code = (error as any).status || 400;
+
+        let statusMessage = '';
+
+        if (code == 400) {
+          statusMessage = 'Bad Request';
+        }
+
+        if (code == 404) {
+          statusMessage = 'Not Found';
+        }
+
+        return res.status(code).json({
+          code: code,
+          status: statusMessage,
+          message: error.message,
+        });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
+      }
+    }
+  }
 }
