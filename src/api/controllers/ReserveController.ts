@@ -7,7 +7,13 @@ export class ReserveController {
 
   async createReserve(req: Request, res: Response) {
     try {
-      const { car_id, startDate, endDate } = req.body;
+      const { carId, startDate, endDate } = req.body;
+
+      const newReserve = await this.reserveService.createReserve(
+        carId,
+        startDate,
+        endDate,
+      );
 
       /*if (!car_id || !startDate || !endDate) {
         return res.status(400).json({
@@ -17,17 +23,11 @@ export class ReserveController {
         });
       }*/
 
-      const newReserve = await this.reserveService.createReserve(
-        car_id,
-        startDate,
-        endDate,
-      );
-
       const formattedReserve = {
         id: newReserve.id,
         startDate: format(newReserve.startDate, 'dd/MM/yyyy'),
         endDate: format(newReserve.endDate, 'dd/MM/yyyy'),
-        car_id: newReserve.car.id,
+        carId: newReserve.car.id,
       };
 
       return res.status(201).json(formattedReserve);
