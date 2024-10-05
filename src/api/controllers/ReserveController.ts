@@ -38,6 +38,39 @@ export class ReserveController {
     }
   }
 
+  async getReserveById(req: Request, res: Response): Promise<Response> {
+    const id = req.params.id;
+
+    try {
+      const reserve = await this.reserveService.getReserveById(
+        parseInt(id, 10),
+      );
+
+      if (!reserve) {
+        return res.status(404).json({
+          code: 404,
+          status: 'Not Found',
+          message: 'Reserve not found',
+        });
+      }
+
+      return res.status(200).json({
+        id: reserve.id,
+        startDate: format(reserve.startDate, 'dd/MM/yyyy'),
+        endDate: format(reserve.endDate, 'dd/MM/yyyy'),
+        carId: reserve.car.id,
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(500).json({ message: error.message });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
+      }
+    }
+  }
+
   async createReserve(req: Request, res: Response) {
     try {
       const { carId, startDate, endDate } = req.body;
