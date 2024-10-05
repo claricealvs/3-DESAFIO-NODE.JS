@@ -50,13 +50,13 @@ export class CarService {
     acessories: AcessoryEnum[],
     numberOfPassengers: number,
   ): Promise<Car> {
-    if (
+    /*if (
       ![model, color, year, valuePerDay, acessories, numberOfPassengers].every(
         (value) => typeof value === null,
       )
     ) {
       throw new Error('All fields are required.');
-    }
+    }*/
 
     if (![model, color].every((value) => typeof value === 'string')) {
       throw new Error('Incompatible data value.');
