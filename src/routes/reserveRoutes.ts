@@ -10,4 +10,9 @@ router.post(
   reserveController.createReserve.bind(reserveController),
 );
 
+router.get(
+  '/reserve',
+  reserveController.getAllReserves.bind(reserveController),
+);
+
 export default router;
