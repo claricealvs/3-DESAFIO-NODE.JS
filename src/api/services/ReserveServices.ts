@@ -97,4 +97,63 @@ export class ReserveService {
 
     return newReserve;
   }
+
+  async updateReserve(
+    id: number,
+    carId: number,
+    startDate: string,
+    endDate: string,
+  ): Promise<Reserve> {
+    const existingReserve = await this.reserveRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingReserve) {
+      throw new Error('The inserted reserve does not exist.');
+    }
+
+    if (![startDate, endDate].every((value) => typeof value === 'string')) {
+      throw new Error('Incompatible data value.');
+    }
+
+    const [startDay, startMonth, startYear] = startDate.split('/');
+    const formattedStartDate = new Date(
+      Number(startYear),
+      Number(startMonth) - 1,
+      Number(startDay) + 1,
+    );
+
+    const [endDay, endMonth, endYear] = endDate.split('/');
+    const formattedEndDate = new Date(
+      Number(endYear),
+      Number(endMonth) - 1,
+      Number(endDay) + 1,
+    );
+
+    // Verificar se a data é válida
+    if (isNaN(formattedStartDate.getTime())) {
+      throw new Error('Invalid start date format');
+    }
+
+    if (isNaN(formattedEndDate.getTime())) {
+      throw new Error('Invalid end date format');
+    }
+
+    const car = await this.carRepository.findOne({ where: { id: carId } });
+
+    if (!car) {
+      throw new Error('Car not found');
+    }
+
+    const newReserve = this.reserveRepository.create({
+      id: id,
+      car: { id: carId },
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+    });
+
+    await this.reserveRepository.save(newReserve);
+
+    return newReserve;
+  }
 }
