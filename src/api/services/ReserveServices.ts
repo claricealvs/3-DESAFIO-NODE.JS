@@ -31,6 +31,24 @@ export class ReserveService {
     }
   }
 
+  async getReserveById(id: number): Promise<Reserve | null> {
+    try {
+      const reserve = await this.reserveRepository.findOne({
+        where: { id },
+        relations: ['car'],
+      });
+      return reserve ? reserve : null;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Error retrieving reserve with ID ${id}: ${error.message}`,
+        );
+      } else {
+        throw new Error('Unknown error retrieving reserve');
+      }
+    }
+  }
+
   async createReserve(
     carId: number,
     startDate: string,
