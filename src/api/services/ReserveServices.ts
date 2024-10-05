@@ -18,7 +18,7 @@ export class ReserveService {
   }
 
   async createReserve(
-    car_id: number,
+    carId: number,
     startDate: string,
     endDate: string,
   ): Promise<Reserve> {
@@ -49,14 +49,14 @@ export class ReserveService {
       throw new Error('Invalid end date format');
     }
 
-    const car = await this.carRepository.findOne(car_id);
+    const car = await this.carRepository.findOne({ where: { id: carId } });
 
     if (!car) {
       throw new Error('Car not found');
     }
 
     const newReserve = this.reserveRepository.create({
-      car: car,
+      car: { id: carId },
       startDate: formattedStartDate,
       endDate: formattedEndDate,
     });
