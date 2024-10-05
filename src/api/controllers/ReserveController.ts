@@ -5,6 +5,39 @@ import { format } from 'date-fns';
 export class ReserveController {
   private reserveService = new ReserveService();
 
+  async getAllReserves(req: Request, res: Response) {
+    try {
+      const reserves = await this.reserveService.getAllReserves();
+
+      const formattedReserves = reserves.map((reserve) => ({
+        reserve: [
+          {
+            id: reserve.id,
+            startDate: format(reserve.startDate, 'dd/MM/yyyy'),
+            endDate: format(reserve.endDate, 'dd/MM/yyyy'),
+            carId: reserve.car.id,
+          },
+        ],
+      }));
+
+      res.json(formattedReserves);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(400).json({
+          code: 400,
+          status: 'Bad Request',
+          message: error.message,
+        });
+      } else {
+        return res.status(500).json({
+          code: 500,
+          status: 'Internal Server Error',
+          message: 'An unexpected error has occurred.',
+        });
+      }
+    }
+  }
+
   async createReserve(req: Request, res: Response) {
     try {
       const { carId, startDate, endDate } = req.body;
