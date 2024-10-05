@@ -156,4 +156,16 @@ export class ReserveService {
 
     return newReserve;
   }
+
+  async deleteReserve(id: string): Promise<void> {
+    const existingReserve = await this.reserveRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingReserve) {
+      throw new Error('The inserted reserve does not exist.');
+    }
+
+    await this.reserveRepository.delete(id);
+  }
 }
