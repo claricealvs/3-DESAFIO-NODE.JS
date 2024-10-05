@@ -25,4 +25,9 @@ router.put(
   reserveController.updateReserve.bind(reserveController),
 );
 
+router.delete(
+  '/reserve/:id',
+  reserveController.deleteReserve.bind(reserveController),
+);
+
 export default router;
