@@ -17,6 +17,20 @@ export class ReserveService {
     this.carRepository = connection.getRepository(Car);
   }
 
+  async getAllReserves() {
+    try {
+      return await this.reserveRepository.find({
+        relations: ['car'],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Error retrieving reserve: ${error.message}`);
+      } else {
+        throw new Error(`Unknown error retrieving reserve`);
+      }
+    }
+  }
+
   async createReserve(
     carId: number,
     startDate: string,
