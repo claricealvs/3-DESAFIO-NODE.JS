@@ -20,4 +20,9 @@ router.get(
   reserveController.getReserveById.bind(reserveController),
 );
 
+router.put(
+  '/reserve/:id',
+  reserveController.updateReserve.bind(reserveController),
+);
+
 export default router;
