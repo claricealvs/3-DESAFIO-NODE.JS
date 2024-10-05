@@ -123,4 +123,51 @@ export class ReserveController {
       }
     }
   }
+
+  async updateReserve(req: Request, res: Response) {
+    try {
+      const { carId, startDate, endDate } = req.body;
+      const id = req.params.id;
+
+      const updatedReserve = await this.reserveService.updateReserve(
+        parseInt(id, 10),
+        carId,
+        startDate,
+        endDate,
+      );
+
+      const formattedReserve = {
+        id: updatedReserve.id,
+        startDate: format(updatedReserve.startDate, 'dd/MM/yyyy'),
+        endDate: format(updatedReserve.endDate, 'dd/MM/yyyy'),
+        carId: updatedReserve.car.id,
+      };
+
+      return res.status(201).json(formattedReserve);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        const code = (error as any).status || 400;
+
+        let statusMessage = '';
+
+        if (code == 400) {
+          statusMessage = 'Bad Request';
+        }
+
+        if (code == 404) {
+          statusMessage = 'Not Found';
+        }
+
+        return res.status(code).json({
+          code: code,
+          status: statusMessage,
+          message: error.message,
+        });
+      } else {
+        return res
+          .status(500)
+          .json({ error: 'An unexpected error has occurred.' });
+      }
+    }
+  }
 }
