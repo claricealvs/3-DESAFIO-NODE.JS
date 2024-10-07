@@ -171,3 +171,5 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 }
+
+export default new UserService();
