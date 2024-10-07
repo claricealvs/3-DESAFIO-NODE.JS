@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import connect from '../../database/connection';
+import bcrypt from 'bcryptjs';
 import { User } from '../../database/entities/User';
 
 export class UserService {
@@ -51,6 +52,14 @@ export class UserService {
     email: string,
     password: string,
   ): Promise<User> {
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new Error('Email already in use');
+    }
+
     if (
       ![name, cpf, cep, email, password].every(
         (value) => typeof value === 'string',
@@ -71,13 +80,15 @@ export class UserService {
       throw new Error('Invalid birth date format');
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = this.userRepository.create({
       name,
       cpf,
       birth: formattedBirth,
       cep,
       email,
-      password,
+      password: hashedPassword,
     });
 
     await this.userRepository.save(newUser);

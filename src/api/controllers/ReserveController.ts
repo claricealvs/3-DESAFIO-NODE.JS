@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 export class ReserveController {
   private reserveService = new ReserveService();
 
-  async getAllReserves(req: Request, res: Response) {
+  getAllReserves = async (req: Request, res: Response) => {
     try {
       const reserves = await this.reserveService.getAllReserves();
 
@@ -36,9 +36,9 @@ export class ReserveController {
         });
       }
     }
-  }
+  };
 
-  async getReserveById(req: Request, res: Response): Promise<Response> {
+  getReserveById = async (req: Request, res: Response): Promise<Response> => {
     const id = req.params.id;
 
     try {
@@ -69,9 +69,9 @@ export class ReserveController {
           .json({ error: 'An unexpected error has occurred.' });
       }
     }
-  }
+  };
 
-  async createReserve(req: Request, res: Response) {
+  createReserve = async (req: Request, res: Response) => {
     try {
       const { carId, startDate, endDate } = req.body;
 
@@ -122,9 +122,9 @@ export class ReserveController {
           .json({ error: 'An unexpected error has occurred.' });
       }
     }
-  }
+  };
 
-  async updateReserve(req: Request, res: Response) {
+  updateReserve = async (req: Request, res: Response) => {
     try {
       const { carId, startDate, endDate } = req.body;
       const id = req.params.id;
@@ -169,9 +169,9 @@ export class ReserveController {
           .json({ error: 'An unexpected error has occurred.' });
       }
     }
-  }
+  };
 
-  async deleteReserve(req: Request, res: Response) {
+  deleteReserve = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
 
@@ -203,5 +203,5 @@ export class ReserveController {
           .json({ error: 'An unexpected error has occurred.' });
       }
     }
-  }
+  };
 }

@@ -9,7 +9,8 @@
       "forceConsistentCasingInFileNames": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "typeRoots": ["./node_modules/@types", "./src/@types"]
     },
     "include": [
       "src/**/*.ts"
