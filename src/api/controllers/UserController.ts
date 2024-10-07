@@ -55,15 +55,30 @@ export class UserController {
         });
       }
 
-      return res.status(200).json({
+      const { data: address } = await axios.get(
+        `https://viacep.com.br/ws/${user.cep}/json`,
+      );
+
+      if (address.erro) {
+        throw new Error('Invalid CEP');
+      }
+
+      // Montar o objeto com os dados do endereço
+      const userWithAddress = {
         id: user.id,
         name: user.name,
         cpf: user.cpf,
         birth: user.birth,
-        cep: user.cep,
         email: user.email,
-        password: user.password,
-      });
+        cep: user.cep,
+        street: address.logradouro,
+        neighborhood: address.bairro,
+        city: address.localidade,
+        uf: address.uf,
+        complement: address.complemento || '',
+      };
+
+      return res.status(200).json(userWithAddress);
     } catch (error: unknown) {
       if (error instanceof Error) {
         return res.status(500).json({ message: error.message });
