@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/UserServices';
+import axios from 'axios';
 
 export class UserController {
   private userService = new UserService();
@@ -107,14 +108,27 @@ export class UserController {
         newUser.birth,
       );
 
+      const { data: address } = await axios.get(
+        `https://viacep.com.br/ws/${cep}/json`,
+      );
+
+      if (address.erro) {
+        throw new Error('Invalid CEP');
+      }
+
       const formattedUser = {
         id: newUser.id,
         name: newUser.name,
         cpf: newUser.cpf,
         birth: formattedBirth,
-        cep: newUser.cep,
         email: newUser.email,
         password: newUser.password,
+        cep: newUser.cep,
+        street: address.logradouro,
+        neighborhood: address.bairro,
+        city: address.localidade,
+        uf: address.uf,
+        complement: address.complemento || '',
       };
 
       return res.status(201).json(formattedUser);
