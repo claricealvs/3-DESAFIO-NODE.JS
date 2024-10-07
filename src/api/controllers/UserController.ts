@@ -137,7 +137,6 @@ export class UserController {
         cpf: newUser.cpf,
         birth: formattedBirth,
         email: newUser.email,
-        password: newUser.password,
         cep: newUser.cep,
         street: address.logradouro,
         neighborhood: address.bairro,
