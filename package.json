@@ -1,0 +1,43 @@
+{
+    "name": "project",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "scripts": {
+        "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
+        "start": "ts-node src/index.ts",
+        "dev": "ts-node-dev --transpile-only src/index.ts",
+        "lint": "eslint \"src/**/*.{js,ts}\"",
+        "prettier": "prettier --write \"src/**/*.{js,ts}\""
+    },
+    "dependencies": {
+        "axios": "^1.7.7",
+        "bcryptjs": "^2.4.3",
+        "date-fns": "^3.6.0",
+        "dotenv": "^16.0.0",
+        "express": "^4.19.2",
+        "install": "^0.13.0",
+        "jsonwebtoken": "^9.0.2",
+        "npm": "^10.8.3",
+        "project": "file:",
+        "reflect-metadata": "^0.1.13",
+        "sqlite3": "^5.1.7",
+        "swagger-ui-express": "^5.0.1",
+        "typeorm": "^0.2.29"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.7",
+        "@types/swagger-ui-express": "^4.1.6",
+        "@typescript-eslint/eslint-plugin": "^5.62.0",
+        "@typescript-eslint/parser": "^5.62.0",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "prettier": "^3.3.3",
+        "ts-node": "^10.9.2",
+        "ts-node-dev": "^2.0.0",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.5.4"
+    }
+}
