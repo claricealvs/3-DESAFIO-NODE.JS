@@ -62,14 +62,14 @@ export class ReserveService {
     const formattedStartDate = new Date(
       Number(startYear),
       Number(startMonth) - 1,
-      Number(startDay),
+      Number(startDay) + 1,
     );
 
     const [endDay, endMonth, endYear] = endDate.split('/');
     const formattedEndDate = new Date(
       Number(endYear),
       Number(endMonth) - 1,
-      Number(endDay),
+      Number(endDay) + 1,
     );
 
     // Verificar se a data é válida
