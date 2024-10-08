@@ -16,6 +16,7 @@ export class ReserveController {
             startDate: format(reserve.startDate, 'dd/MM/yyyy'),
             endDate: format(reserve.endDate, 'dd/MM/yyyy'),
             carId: reserve.car.id,
+            userId: reserve.user.id,
           },
         ],
       }));
@@ -59,6 +60,7 @@ export class ReserveController {
         startDate: format(reserve.startDate, 'dd/MM/yyyy'),
         endDate: format(reserve.endDate, 'dd/MM/yyyy'),
         carId: reserve.car.id,
+        userId: reserve.user.id,
       });
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -73,27 +75,22 @@ export class ReserveController {
 
   createReserve = async (req: Request, res: Response) => {
     try {
-      const { carId, startDate, endDate } = req.body;
+      const { carId, userId, startDate, endDate } = req.body;
 
       const newReserve = await this.reserveService.createReserve(
         carId,
+        userId,
         startDate,
         endDate,
       );
-
-      /*if (!car_id || !startDate || !endDate) {
-        return res.status(400).json({
-          code: 400,
-          status: 'Bad Request',
-          message: 'All fields are required.',
-        });
-      }*/
 
       const formattedReserve = {
         id: newReserve.id,
         startDate: format(newReserve.startDate, 'dd/MM/yyyy'),
         endDate: format(newReserve.endDate, 'dd/MM/yyyy'),
+        finalValue: newReserve.finalValue,
         carId: newReserve.car.id,
+        userId: newReserve.user.id,
       };
 
       return res.status(201).json(formattedReserve);
@@ -126,12 +123,13 @@ export class ReserveController {
 
   updateReserve = async (req: Request, res: Response) => {
     try {
-      const { carId, startDate, endDate } = req.body;
+      const { carId, userId, startDate, endDate } = req.body;
       const id = req.params.id;
 
       const updatedReserve = await this.reserveService.updateReserve(
         parseInt(id, 10),
         carId,
+        userId,
         startDate,
         endDate,
       );
@@ -141,6 +139,7 @@ export class ReserveController {
         startDate: format(updatedReserve.startDate, 'dd/MM/yyyy'),
         endDate: format(updatedReserve.endDate, 'dd/MM/yyyy'),
         carId: updatedReserve.car.id,
+        userId: updatedReserve.user.id,
       };
 
       return res.status(201).json(formattedReserve);

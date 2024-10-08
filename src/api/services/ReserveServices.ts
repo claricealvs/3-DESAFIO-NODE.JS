@@ -2,10 +2,13 @@ import { Repository } from 'typeorm';
 import connect from '../../database/connection';
 import { Reserve } from '../../database/entities/Reserve';
 import { Car } from '../../database/entities/Car';
+import { User } from '../../database/entities/User';
+import { differenceInDays, parse } from 'date-fns';
 
 export class ReserveService {
   private reserveRepository!: Repository<Reserve>;
   private carRepository!: Repository<Car>;
+  private userRepository!: Repository<User>;
 
   constructor() {
     this.initializeRepository();
@@ -15,12 +18,13 @@ export class ReserveService {
     const connection = await connect();
     this.reserveRepository = connection.getRepository(Reserve);
     this.carRepository = connection.getRepository(Car);
+    this.userRepository = connection.getRepository(User);
   }
 
   async getAllReserves() {
     try {
       return await this.reserveRepository.find({
-        relations: ['car'],
+        relations: ['car', 'user'],
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -35,7 +39,7 @@ export class ReserveService {
     try {
       const reserve = await this.reserveRepository.findOne({
         where: { id },
-        relations: ['car'],
+        relations: ['car', 'user'],
       });
       return reserve ? reserve : null;
     } catch (error) {
@@ -51,6 +55,7 @@ export class ReserveService {
 
   async createReserve(
     carId: number,
+    userId: number,
     startDate: string,
     endDate: string,
   ): Promise<Reserve> {
@@ -73,24 +78,41 @@ export class ReserveService {
     );
 
     // Verificar se a data é válida
-    if (isNaN(formattedStartDate.getTime())) {
+    if (
+      isNaN(formattedStartDate.getTime()) ||
+      isNaN(formattedEndDate.getTime())
+    ) {
       throw new Error('Invalid start date format');
     }
 
-    if (isNaN(formattedEndDate.getTime())) {
-      throw new Error('Invalid end date format');
+    if (formattedEndDate <= formattedStartDate) {
+      throw new Error('End date must be after start date.');
     }
 
     const car = await this.carRepository.findOne({ where: { id: carId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!car) {
       throw new Error('Car not found');
     }
 
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const timeDifference = Math.abs(
+      formattedEndDate.getTime() - formattedStartDate.getTime(),
+    );
+    const days = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    const finalValue = car.valuePerDay * days;
+
     const newReserve = this.reserveRepository.create({
       car: { id: carId },
+      user: { id: userId },
       startDate: formattedStartDate,
       endDate: formattedEndDate,
+      finalValue: finalValue,
     });
 
     await this.reserveRepository.save(newReserve);
@@ -101,6 +123,7 @@ export class ReserveService {
   async updateReserve(
     id: number,
     carId: number,
+    userId: number,
     startDate: string,
     endDate: string,
   ): Promise<Reserve> {
@@ -140,14 +163,20 @@ export class ReserveService {
     }
 
     const car = await this.carRepository.findOne({ where: { id: carId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!car) {
       throw new Error('Car not found');
     }
 
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     const newReserve = this.reserveRepository.create({
       id: id,
       car: { id: carId },
+      user: { id: userId },
       startDate: formattedStartDate,
       endDate: formattedEndDate,
     });
