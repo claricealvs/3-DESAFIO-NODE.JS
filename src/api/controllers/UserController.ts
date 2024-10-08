@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/UserServices';
 import axios from 'axios';
+import { format } from 'date-fns';
 
 export class UserController {
   private userService = new UserService();
@@ -102,14 +103,6 @@ export class UserController {
         });
       }
 
-      const birthParts = birth.split('/');
-      if (
-        birthParts.length !== 3 ||
-        isNaN(Date.parse(`${birthParts[0]}-${birthParts[1]}-${birthParts[2]}`))
-      ) {
-        return res.status(400).json({ error: 'Invalid birth date format.' });
-      }
-
       const newUser = await this.userService.createUser(
         name,
         cpf,
@@ -117,10 +110,6 @@ export class UserController {
         cep,
         email,
         password,
-      );
-
-      const formattedBirth = this.userService.formatDateToBrazilian(
-        newUser.birth,
       );
 
       const { data: address } = await axios.get(
@@ -135,7 +124,7 @@ export class UserController {
         id: newUser.id,
         name: newUser.name,
         cpf: newUser.cpf,
-        birth: formattedBirth,
+        birth: format(newUser.birth, 'dd/MM/yyyy'),
         email: newUser.email,
         cep: newUser.cep,
         street: address.logradouro,
@@ -187,14 +176,6 @@ export class UserController {
         });
       }
 
-      const birthParts = birth.split('/');
-      if (
-        birthParts.length !== 3 ||
-        isNaN(Date.parse(`${birthParts[0]}-${birthParts[1]}-${birthParts[2]}`))
-      ) {
-        return res.status(400).json({ error: 'Invalid birth date format.' });
-      }
-
       const updatedUser = await this.userService.updateUser(
         parseInt(id, 10),
         name,
@@ -209,7 +190,7 @@ export class UserController {
         id: updatedUser.id,
         name: updatedUser.name,
         cpf: updatedUser.cpf,
-        birth: updatedUser.birth,
+        birth: format(updatedUser.birth, 'dd/MM/yyyy'),
         cep: updatedUser.cep,
         email: updatedUser.email,
         password: updatedUser.password,
