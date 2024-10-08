@@ -3,7 +3,6 @@ import connect from '../../database/connection';
 import { Reserve } from '../../database/entities/Reserve';
 import { Car } from '../../database/entities/Car';
 import { User } from '../../database/entities/User';
-import { differenceInDays, parse } from 'date-fns';
 
 export class ReserveService {
   private reserveRepository!: Repository<Reserve>;

@@ -15,6 +15,7 @@ export class ReserveController {
             id: reserve.id,
             startDate: format(reserve.startDate, 'dd/MM/yyyy'),
             endDate: format(reserve.endDate, 'dd/MM/yyyy'),
+            finalValue: reserve.finalValue,
             carId: reserve.car.id,
             userId: reserve.user.id,
           },
@@ -59,6 +60,7 @@ export class ReserveController {
         id: reserve.id,
         startDate: format(reserve.startDate, 'dd/MM/yyyy'),
         endDate: format(reserve.endDate, 'dd/MM/yyyy'),
+        finalValue: reserve.finalValue,
         carId: reserve.car.id,
         userId: reserve.user.id,
       });
