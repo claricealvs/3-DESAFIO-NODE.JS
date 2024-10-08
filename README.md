@@ -315,7 +315,7 @@ _Response:_
 
 ---
 
-`GET localhost:3000/v1/user/:id`: Listar um usuário pelo id.
+`GET localhost:3000/v1/user/{id}`: Listar um usuário pelo id.
 
 _Response:_
 
@@ -444,7 +444,7 @@ _Response:_
 
 ---
 
-`GET /v1/reserve/{id}`: Listar uma reserva pelo id.
+`GET localhost:3000/v1/reserve/{id}`: Listar uma reserva pelo id.
 
 _Response:_
 
