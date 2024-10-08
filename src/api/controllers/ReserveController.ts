@@ -140,6 +140,7 @@ export class ReserveController {
         id: updatedReserve.id,
         startDate: format(updatedReserve.startDate, 'dd/MM/yyyy'),
         endDate: format(updatedReserve.endDate, 'dd/MM/yyyy'),
+        finalValue: updatedReserve.finalValue,
         carId: updatedReserve.car.id,
         userId: updatedReserve.user.id,
       };
