@@ -153,12 +153,15 @@ export class ReserveService {
     );
 
     // Verificar se a data é válida
-    if (isNaN(formattedStartDate.getTime())) {
+    if (
+      isNaN(formattedStartDate.getTime()) ||
+      isNaN(formattedEndDate.getTime())
+    ) {
       throw new Error('Invalid start date format');
     }
 
-    if (isNaN(formattedEndDate.getTime())) {
-      throw new Error('Invalid end date format');
+    if (formattedEndDate <= formattedStartDate) {
+      throw new Error('End date must be after start date.');
     }
 
     const car = await this.carRepository.findOne({ where: { id: carId } });
@@ -172,12 +175,20 @@ export class ReserveService {
       throw new Error('User not found');
     }
 
+    const timeDifference = Math.abs(
+      formattedEndDate.getTime() - formattedStartDate.getTime(),
+    );
+    const days = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    const finalValue = car.valuePerDay * days;
+
     const newReserve = this.reserveRepository.create({
       id: id,
       car: { id: carId },
       user: { id: userId },
       startDate: formattedStartDate,
       endDate: formattedEndDate,
+      finalValue: finalValue,
     });
 
     await this.reserveRepository.save(newReserve);
